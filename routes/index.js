@@ -116,7 +116,7 @@ router.post('/api/sync', async (req, res) => {
       // -- Save Receipt --
       await connection.query(
           'INSERT INTO receipts (receipt_number, created_at, total_money, total_tax, source, customer_id) VALUES (?, ?, ?, ?, ?, ?)',
-          [receipt.receipt_number, receipt.created_at, receipt.total_money, receipt.total_tax, receipt.source, receipt.customer_id]
+          [receipt.receipt_number, new Date(receipt.created_at), receipt.total_money, receipt.total_tax, receipt.source, receipt.customer_id]
       );
 
       // -- Save Line Items and build text for AI --
