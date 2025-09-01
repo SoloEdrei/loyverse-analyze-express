@@ -168,12 +168,26 @@ router.post('/api/chat', async (req, res) => {
   if (!question) {
     return res.status(400).json({ error: 'Question is required.' });
   }
+
+  console.log(`[CHAT] Forwarding question to AI service: "${question}"`);
+
   try {
-    const response = await axios.post(`${process.env.PYTHON_SERVICE_URL}/query/chat`, { question });
+    const response = await axios.post(
+        `${process.env.PYTHON_SERVICE_URL}/query/chat`,
+        { question },
+        { timeout: 30000 } // Add a 30-second timeout for the AI to respond
+    );
+
+    console.log('[CHAT] Received AI response:', response.data);
     res.json(response.data);
+
   } catch (error) {
-    console.error('Error forwarding chat request:', error.response ? error.response.data : error.message);
-    res.status(500).json({ error: 'Failed to get a response from the AI service.' });
+    const errorMessage = error.response ? error.response.data : error.message;
+    console.error('[CHAT] Error forwarding chat request:', errorMessage);
+    res.status(500).json({
+      error: 'Failed to get a response from the AI service.',
+      details: errorMessage
+    });
   }
 });
 
