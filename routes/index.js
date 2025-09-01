@@ -73,16 +73,17 @@ router.post('/api/sync', async (req, res) => {
     const customers = loyverseCustomersResponse.data.customers || [];
     for (const customer of customers) {
       await connection.query(
-          `INSERT INTO customers (id, name, email, phone_number, total_visits, total_spent, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?)
+          `INSERT INTO customers (id, name, email, phone_number, total_visits, total_spent, total_points, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)
              ON DUPLICATE KEY UPDATE
                                 name = VALUES(name),
                                 email = VALUES(email),
                                 phone_number = VALUES(phone_number),
                                 total_visits = VALUES(total_visits),
                                 total_spent = VALUES(total_spent),
+                                total_points = VALUES(total_points),
                                 updated_at = VALUES(updated_at)`,
-          [customer.id, customer.name, customer.email, customer.phone_number, customer.total_visits, customer.total_spent, new Date(customer.updated_at)]
+          [customer.id, customer.name, customer.email, customer.phone_number, customer.total_visits, customer.total_spent, customer.total_points, new Date(customer.updated_at)]
       );
     }
     console.log(`Synced ${customers.length} customers.`);
